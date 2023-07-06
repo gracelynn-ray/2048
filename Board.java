@@ -3,6 +3,9 @@ public class Board {
     public static final int NUM_COLS = 4;
     public static final int EMPTY = 1;
 
+    public static final int ROW = 0;
+    public static final int COL = 1;
+
     Tile[][] board;
 
     public Board() {
@@ -18,6 +21,27 @@ public class Board {
                 board[i][j] = new Tile();
             }
         }
+    }
+
+    public void swipe(int[][] direction) {
+        findMergingTiles(direction);
+        boolean merged = mergeTiles(direction);
+        boolean shifted = shiftTiles(direction);
+        if (merged || shifted) {
+            addTile();
+        }
+    }
+
+    public void findMergingTiles(int[][] direction) {
+
+    }
+
+    public boolean mergeTiles(int[][] direction) {
+
+    }
+
+    public boolean shiftTiles(int[][] direction) {
+        
     }
 
     public void swipeUp() {
