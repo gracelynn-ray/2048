@@ -1,29 +1,41 @@
+// Represents a board of tiles for a 2048 game.
 public class Board {
-    public static final int NUM_ROWS = 4;
-    public static final int NUM_COLS = 4;
-    public static final int EMPTY = 1;
+    // Initialization of constants.
+    public static final int NUM_ROWS_AND_COLS = 4; // number of rows and columns in board
+    public static final int EMPTY = 1; // represents an empty tile
 
+    // Represent directions to swipe tiles based on row and column change.
+    public static final int[] UP = { -1, 0 };
+    public static final int[] DOWN = { 1, 0 };
+    public static final int[] LEFT = { 0, -1 };
+    public static final int[] RIGHT = { 0, 1 };
+
+    // Used to index direction arrays.
     public static final int ROW = 0;
     public static final int COL = 1;
 
-    Tile[][] board;
+    // Declaration of field.
+    Tile[][] board; // array of tiles that represents game board
 
+    // Board constructor creates a board with two randomly placed tiles.
     public Board() {
         createBoard();
         addTile();
         addTile();
     }
 
+    // Initializes board with empty tiles.
     private void createBoard() {
-        board = new Tile[NUM_ROWS][NUM_COLS];
-        for (int i = 0; i < NUM_ROWS; i++) {
-            for (int j = 0; j < NUM_COLS; j++) {
+        board = new Tile[NUM_ROWS_AND_COLS][NUM_ROWS_AND_COLS];
+        for (int i = 0; i < NUM_ROWS_AND_COLS; i++) {
+            for (int j = 0; j < NUM_ROWS_AND_COLS; j++) {
                 board[i][j] = new Tile();
             }
         }
     }
 
-    public void swipe(int[][] direction) {
+    // Takes in a direction represented by an array and swipes in that direction.
+    private void swipe(int[] direction) {
         findMergingTiles(direction);
         boolean merged = mergeTiles(direction);
         boolean shifted = shiftTiles(direction);
@@ -32,264 +44,80 @@ public class Board {
         }
     }
 
-    public void findMergingTiles(int[][] direction) {
-
-    }
-
-    public boolean mergeTiles(int[][] direction) {
-
-    }
-
-    public boolean shiftTiles(int[][] direction) {
-        
-    }
-
+    // Swipes tiles upward.
     public void swipeUp() {
-        findMergingTilesUp();
-        boolean merged = mergeTilesUp();
-        boolean shifted = shiftTilesUp();
-        if (merged || shifted) {
-            addTile();
-        }
+        swipe(UP);
     }
 
-    private void findMergingTilesUp() {
-        for (int col = 0; col < NUM_COLS; col++) {
-            for (int row = 1; row < NUM_ROWS; row++) {
-                Tile tile = board[row][col];
-                if (tile.getValue() != EMPTY) {
-                    Tile nearestTile = findNearestTileUp(row, col);
-                    if (tile.getValue() == nearestTile.getValue() && !nearestTile.getMerge()) {
-                        tile.setMerge(true);
-                    }
-                }
-            }
-        }
-    }
-
-    private Tile findNearestTileUp(int row, int col) {
-        while (row != 0) {
-            row--;
-            if (board[row][col].getValue() != EMPTY) {
-                return board[row][col];
-            }
-        }
-        return board[row][col];
-    }
-
-    private boolean mergeTilesUp() {
-        boolean merged = false;
-        for (int col = 0; col < NUM_COLS; col++) {
-            for (int row = 1; row < NUM_ROWS; row++) {
-                Tile tile = board[row][col];
-                if (tile.getMerge()) {
-                    merged = true;
-                    Tile nearestTile = findNearestTileUp(row, col);
-                    nearestTile.doubleValue();
-                    tile.emptyValue();
-                    tile.setMerge(false);
-                }
-            }
-        }
-        return merged;
-    }
-
-    private boolean shiftTilesUp() {
-        boolean shifted = false;
-        for (int row = 1; row < NUM_ROWS; row++) {
-            for (int col = 0; col < NUM_COLS; col++) {
-                if (board[row][col].getValue() != EMPTY) {
-                    int newRow = row;
-                    while (newRow != 0 && board[newRow - 1][col].getValue() == EMPTY) {
-                        shifted = true;
-                        board[newRow - 1][col].changeValue(board[newRow][col].getValue());
-                        board[newRow][col].emptyValue();
-                        newRow--;
-                    }
-                }
-            }
-        }
-        return shifted;
-    }
-
+    // Swipes tiles downward.
     public void swipeDown() {
-        findMergingTilesDown();
-        boolean merged = mergeTilesDown();
-        boolean shifted = shiftTilesDown();
-        if (merged || shifted) {
-            addTile();
-        }
+        swipe(DOWN);
     }
 
-    private void findMergingTilesDown() {
-        for (int col = 0; col < NUM_COLS; col++) {
-            for (int row = NUM_ROWS - 2; row >= 0; row--) {
-                Tile tile = board[row][col];
-                if (tile.getValue() != EMPTY) {
-                    Tile nearestTile = findNearestTileDown(row, col);
-                    if (tile.getValue() == nearestTile.getValue() && !nearestTile.getMerge()) {
-                        tile.setMerge(true);
-                    }
-                }
-            }
-        }
-    }
-
-    private Tile findNearestTileDown(int row, int col) {
-        while (row != NUM_ROWS - 1) {
-            row++;
-            if (board[row][col].getValue() != EMPTY) {
-                return board[row][col];
-            }
-        }
-        return board[row][col];
-    }
-
-    private boolean mergeTilesDown() {
-        boolean merged = false;
-        for (int col = 0; col < NUM_COLS; col++) {
-            for (int row = NUM_ROWS - 2; row >= 0; row--) {
-                Tile tile = board[row][col];
-                if (tile.getMerge()) {
-                    merged = true;
-                    Tile nearestTile = findNearestTileDown(row, col);
-                    nearestTile.doubleValue();
-                    tile.emptyValue();
-                    tile.setMerge(false);
-                }
-            }
-        }
-        return merged;
-    }
-
-    private boolean shiftTilesDown() {
-        boolean shifted = false;
-        for (int row = NUM_ROWS - 2; row >= 0; row--) {
-            for (int col = 0; col < NUM_COLS; col++) {
-                if (board[row][col].getValue() != EMPTY) {
-                    int newRow = row;
-                    while (newRow != NUM_ROWS - 1 && board[newRow + 1][col].getValue() == EMPTY) {
-                        shifted = true;
-                        board[newRow + 1][col].changeValue(board[newRow][col].getValue());
-                        board[newRow][col].emptyValue();
-                        newRow++;
-                    }
-                }
-            }
-        }
-        return shifted;
-    }
-
+    // Swipes tiles to the left.
     public void swipeLeft() {
-        findMergingTilesLeft();
-        boolean merged = mergeTilesLeft();
-        boolean shifted = shiftTilesLeft();
-        if (merged || shifted) {
-            addTile();
-        }
+        swipe(LEFT);
     }
 
-    private void findMergingTilesLeft() {
-        for (int col = 1; col < NUM_COLS; col++) {
-            for (int row = 0; row < NUM_ROWS; row++) {
+    // Swipes tiles to the right.
+    public void swipeRight() {
+        swipe(RIGHT);
+    }
+
+    // Iterates through board and finds tiles that need to merge, given swiping direction.
+    private void findMergingTiles(int[] direction) {
+        // The row and column that iteration starts at depends on direction.
+        int rowIncrement = direction[ROW] <= 0 ? 1 : -1;
+        int colIncrement = direction[COL] <= 0 ? 1 : -1;
+        int startingRow = direction[ROW] <= 0 ? -direction[ROW] : NUM_ROWS_AND_COLS - 2;
+        int startingCol = direction[COL] <= 0 ? -direction[COL] : NUM_ROWS_AND_COLS - 2;
+        for (int row = startingRow; row >= 0 && row < NUM_ROWS_AND_COLS; row += rowIncrement) {
+            for (int col = startingCol; col >= 0 && col < NUM_ROWS_AND_COLS; col += colIncrement) {
                 Tile tile = board[row][col];
                 if (!tile.isEmpty()) {
-                    Tile nearestTile = findNearestTileLeft(row, col);
+                    Tile nearestTile = findNearestTile(direction, row, col);
+                    // Marks that this tile needs to merge if there is another tile of the same value in
+                    // swiping direction.
                     if (tile.getValue() == nearestTile.getValue() && !nearestTile.getMerge()) {
                         tile.setMerge(true);
                     }
                 }
             }
         }
-    }
-    
-    private Tile findNearestTileLeft(int row, int col) {
-        while (col != 0) {
-            col--;
-            if (!board[row][col].isEmpty()) {
-                return board[row][col];
-            }
-        }
-        return board[row][col];
+
     }
 
-    private boolean mergeTilesLeft() {
-        boolean merged = false;
-        for (int col = 1; col < NUM_COLS; col++) {
-            for (int row = 0; row < NUM_ROWS; row++) {
-                Tile tile = board[row][col];
-                if (tile.getMerge()) {
-                    merged = true;
-                    Tile nearestTile = findNearestTileLeft(row, col);
-                    nearestTile.doubleValue();
-                    tile.emptyValue();
-                    tile.setMerge(false);
-                }
-            }
-        }
-        return merged;
-    }
-
-    private boolean shiftTilesLeft() {
-        boolean shifted = false;
-        for (int col = 1; col < NUM_COLS; col++) {
-            for (int row = 0; row < NUM_ROWS; row++) {
-                if (!board[row][col].isEmpty()) {
-                    int newCol = col;
-                    while (newCol != 0 && board[row][newCol - 1].isEmpty()) {
-                        shifted = true;
-                        board[row][newCol - 1].changeValue(board[row][newCol].getValue());
-                        board[row][newCol].emptyValue();
-                        newCol--;
-                    }
-                }
-            }
-        }
-        return shifted;
-    }
-
-    public void swipeRight() {
-        findMergingTilesRight();
-        boolean merged = mergeTilesRight();
-        boolean shifted = shiftTilesRight();
-        if (merged || shifted) {
-            addTile();
-        }
-    }
-
-    private void findMergingTilesRight() {
-        for (int col = NUM_ROWS - 2; col >= 0; col--) {
-            for (int row = 0; row < NUM_COLS; row++) {
-                Tile tile = board[row][col];
-                if (tile.getValue() != EMPTY) {
-                    Tile nearestTile = findNearestTileRight(row, col);
-                    if (tile.getValue() == nearestTile.getValue() && !nearestTile.getMerge()) {
-                        tile.setMerge(true);
-                    }
-                }
-            }
-        }
-    }
-
-    private Tile findNearestTileRight(int row, int col) {
-        while (col != NUM_COLS - 1) {
-            col++;
+    // Finds the nearest non-empty tile given a starting tile position and direction.
+    private Tile findNearestTile(int[] direction, int row, int col) {
+        int rowIncrement = direction[ROW];
+        int colIncrement = direction[COL];
+        while (row + rowIncrement >= 0 && row + rowIncrement < NUM_ROWS_AND_COLS &&
+                col + colIncrement >= 0 && col + colIncrement < NUM_ROWS_AND_COLS) {
+            row += rowIncrement;
+            col += colIncrement;
             if (board[row][col].getValue() != EMPTY) {
                 return board[row][col];
             }
         }
+        // Returns empty tile if no non-empty tile are near given tile.
         return board[row][col];
     }
 
-    private boolean mergeTilesRight() {
+    // Iterates through tiles and merges those that have been marked as needing to merge.
+    private boolean mergeTiles(int[] direction) {
         boolean merged = false;
-        for (int col = NUM_ROWS - 2; col >= 0; col--) {
-            for (int row = 0; row < NUM_COLS; row++) {
+        // The row and column that iteration starts at depends on direction.
+        int rowIncrement = direction[ROW] <= 0 ? 1 : -1;
+        int colIncrement = direction[COL] <= 0 ? 1 : -1;
+        int startingRow = direction[ROW] <= 0 ? -direction[ROW] : NUM_ROWS_AND_COLS - 2;
+        int startingCol = direction[COL] <= 0 ? -direction[COL] : NUM_ROWS_AND_COLS - 2;
+        for (int row = startingRow; row >= 0 && row < NUM_ROWS_AND_COLS; row += rowIncrement) {
+            for (int col = startingCol; col >= 0 && col < NUM_ROWS_AND_COLS; col += colIncrement) {
                 Tile tile = board[row][col];
                 if (tile.getMerge()) {
                     merged = true;
-                    Tile nearestTile = findNearestTileRight(row, col);
-                    nearestTile.doubleValue();
+                    // Doubling the nearest tile and emptying the merging tile is a merge.
+                    findNearestTile(direction, row, col).doubleValue();
                     tile.emptyValue();
                     tile.setMerge(false);
                 }
@@ -298,17 +126,31 @@ public class Board {
         return merged;
     }
 
-    private boolean shiftTilesRight() {
+    // Iterates through tiles and shifts tiles with empty spaces to the nearest non-empty tile in
+    // given direction.
+    private boolean shiftTiles(int[] direction) {
         boolean shifted = false;
-        for (int col = NUM_ROWS - 2; col >= 0; col--) {
-            for (int row = 0; row < NUM_ROWS; row++) {
-                if (board[row][col].getValue() != EMPTY) {
+        // The row and column that iteration starts at depends on direction.
+        int rowIncrement = direction[ROW] <= 0 ? 1 : -1;
+        int colIncrement = direction[COL] <= 0 ? 1 : -1;
+        int startingRow = direction[ROW] <= 0 ? -direction[ROW] : NUM_ROWS_AND_COLS - 2;
+        int startingCol = direction[COL] <= 0 ? -direction[COL] : NUM_ROWS_AND_COLS - 2;
+        for (int row = startingRow; row >= 0 && row < NUM_ROWS_AND_COLS; row += rowIncrement) {
+            for (int col = startingCol; col >= 0 && col < NUM_ROWS_AND_COLS; col += colIncrement) {
+                if (!board[row][col].isEmpty()) {
+                    int newRow = row;
                     int newCol = col;
-                    while (newCol != NUM_COLS - 1 && board[row][newCol + 1].getValue() == EMPTY) {
+                    int newRowIncrement = direction[ROW];
+                    int newColIncrement = direction[COL];
+                    // Keeps moving the tile until it is not next to an empty tile.
+                    while (newRow + newRowIncrement >= 0 && newRow + newRowIncrement < NUM_ROWS_AND_COLS &&
+                            newCol + newColIncrement >= 0 && newCol + newColIncrement < NUM_ROWS_AND_COLS &&
+                            board[newRow + newRowIncrement][newCol + newColIncrement].isEmpty()) {
                         shifted = true;
-                        board[row][newCol + 1].changeValue(board[row][newCol].getValue());
-                        board[row][newCol].emptyValue();
-                        newCol++;
+                        board[newRow + newRowIncrement][newCol + newColIncrement].changeValue(board[newRow][newCol].getValue());
+                        board[newRow][newCol].emptyValue();
+                        newRow += newRowIncrement;
+                        newCol += newColIncrement;
                     }
                 }
             }
@@ -316,40 +158,43 @@ public class Board {
         return shifted;
     }
 
-    public void addTile() {
-        int testRow = (int) (Math.random() * NUM_ROWS);
-        int testCol = (int) (Math.random() * NUM_COLS);
-        while (board[testRow][testCol].getValue() != EMPTY) {
-            testRow = (int) (Math.random() * NUM_ROWS);
-            testCol = (int) (Math.random() * NUM_COLS);
+    // Randomly places a tile on the board where there is currently no tile.
+    private void addTile() {
+        int testRow = (int) (Math.random() * NUM_ROWS_AND_COLS);
+        int testCol = (int) (Math.random() * NUM_ROWS_AND_COLS);
+        while (!board[testRow][testCol].isEmpty()) {
+            testRow = (int) (Math.random() * NUM_ROWS_AND_COLS);
+            testCol = (int) (Math.random() * NUM_ROWS_AND_COLS);
         }
         int chance = (int) (Math.random() * 10);
         board[testRow][testCol].changeValue(chance == 1 ? 4 : 2);
     }
 
+    // Returns a multidimensional array representing the board in integers.
     public int[][] getBoardRepresentation() {
-        int[][] boardRepresentation = new int[NUM_ROWS][NUM_COLS];
-        for (int row = 0; row < NUM_ROWS; row++) {
-            for (int col = 0; col < NUM_COLS; col++) {
+        int[][] boardRepresentation = new int[NUM_ROWS_AND_COLS][NUM_ROWS_AND_COLS];
+        for (int row = 0; row < NUM_ROWS_AND_COLS; row++) {
+            for (int col = 0; col < NUM_ROWS_AND_COLS; col++) {
                 boardRepresentation[row][col] = board[row][col].getValue();
             }
         }
         return boardRepresentation;
     }
 
+    // Returns a string representation of the board.
     public String toString() {
         String boardRepresentation = "";
-        for (int i = 0; i < NUM_ROWS; i++) {
-            for (int j = 0; j < NUM_COLS; j++) {
+        for (int i = 0; i < NUM_ROWS_AND_COLS; i++) {
+            for (int j = 0; j < NUM_ROWS_AND_COLS; j++) {
                 Tile tile = board[i][j];
                 if (tile.getValue() != EMPTY) {
                     boardRepresentation += String.format("%5s", "" + tile.getValue());
                 } else {
                     boardRepresentation += String.format("%5s", "-");
                 }
-                if (j == NUM_COLS - 1 && i != NUM_ROWS - 1) {
+                if (j == NUM_ROWS_AND_COLS - 1 && i != NUM_ROWS_AND_COLS - 1) {
                     boardRepresentation += "\n";
-                } else if (!(j == NUM_COLS - 1 && i == NUM_ROWS - 1)) {
+                } else if (!(j == NUM_ROWS_AND_COLS - 1 && i == NUM_ROWS_AND_COLS - 1)) {
                     boardRepresentation += " ";
                 }
             }
