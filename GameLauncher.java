@@ -40,27 +40,27 @@ public class GameLauncher {
         moveBoard(gameWindow, gameBoardDisplay, gameBoard);
     }
 
-    private static void setUpGame(JFrame f, JPanel gameBoard, Board board) {
-        setUpFrame(f);
-        setUpPanels(f);
+    private static void setUpGame(JFrame gameWindow, JPanel gameBoard, Board board) {
+        setUpFrame(gameWindow);
+        setUpPanels(gameWindow);
         setUpBoardDisplay(gameBoard);
         mirrorBoard(gameBoard, board);
-        f.add(gameBoard);
-        f.pack();
-        f.setVisible(true);
+        gameWindow.add(gameBoard);
+        gameWindow.pack();
+        gameWindow.setVisible(true);
     }
 
-    private static void setUpFrame(JFrame f) {
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setResizable(false);
+    private static void setUpFrame(JFrame gameWindow) {
+        gameWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameWindow.setResizable(false);
         Toolkit tk = Toolkit.getDefaultToolkit();
         Dimension dim = tk.getScreenSize();
         int xPos = (dim.width / 2) - (375);
         int yPos = (dim.height / 2) - (375);
-        f.setLocation(xPos, yPos);
+        gameWindow.setLocation(xPos, yPos);
     }
 
-    private static void setUpPanels(JFrame f) {
+    private static void setUpPanels(JFrame gameWindow) {
         JPanel top = new JPanel();
         top.setBackground(new Color(251, 248, 239));
         top.setPreferredSize(new Dimension(125, 125));
@@ -77,10 +77,10 @@ public class GameLauncher {
         bottom.setBackground(new Color(251, 248, 239));
         bottom.setPreferredSize(new Dimension(125, 125));
 
-        f.add(top, BorderLayout.NORTH);
-        f.add(right, BorderLayout.EAST);
-        f.add(left, BorderLayout.WEST);
-        f.add(bottom, BorderLayout.SOUTH);
+        gameWindow.add(top, BorderLayout.NORTH);
+        gameWindow.add(right, BorderLayout.EAST);
+        gameWindow.add(left, BorderLayout.WEST);
+        gameWindow.add(bottom, BorderLayout.SOUTH);
     }
 
     private static void setUpBoardDisplay(JPanel gameBoard) {
