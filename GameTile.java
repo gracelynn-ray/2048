@@ -63,8 +63,16 @@ public class GameTile {
     }
 
     public void move(int[] direction) {
-        x += direction[COL] * 2;
-        y += direction[ROW] * 2;
+        if (Math.abs(x - targetX) >= 5) {
+            x += direction[COL] * 5;
+        } else {
+            x += direction[COL];
+        }
+        if (Math.abs(y - targetY) >= 5) {
+            y += direction[ROW] * 5;
+        } else {
+            y += direction[ROW];
+        }
     }
 
     public int getValue() {
