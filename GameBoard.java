@@ -51,8 +51,8 @@ public class GameBoard extends JPanel implements ActionListener {
         setBackground(new Color(251, 248, 239));
         setPreferredSize(new Dimension(500, 500));
         existingTiles = new ArrayList<>();
-        existingTiles.add(new GameTile(existingTiles));
-        existingTiles.add(new GameTile(existingTiles));
+        existingTiles.add(new GameTile());
+        existingTiles.add(new GameTile());
     }
 
     private GameTile[][] getBoardRepresentation(boolean merged) {
@@ -241,12 +241,107 @@ public class GameBoard extends JPanel implements ActionListener {
                 }
             }
             if (spawnTile && !finalMerges) {
-                existingTiles.add(new GameTile(existingTiles));
+                existingTiles.add(new GameTile());
                 spawnTile = false;
                 GameLauncher.inProgress = false;
             }
             boardRepresentation = getBoardRepresentation(false);
             repaint();
         }
+    }
+
+    private class GameTile {
+    
+        private static final int COMMON_STARTING_VALUE = 2;
+        private static final int RARE_STARTING_VALUE = 4;
+        
+        private int x;
+        private int y;
+        private int targetX;
+        private int targetY;
+        private int value;
+        private boolean finalMerge;
+        private boolean initialMerge;
+    
+        private GameTile() {
+            boolean duplicate = false;
+            do {
+                duplicate = false;
+                x = (int) (Math.random() * NUM_ROWS_AND_COLS) * ROW_COL_SIZE + BORDER_SIZE;
+                y = (int) (Math.random() * NUM_ROWS_AND_COLS) * ROW_COL_SIZE + BORDER_SIZE;
+                for (GameTile existingTile : existingTiles) {
+                    if (existingTile.getX() == x && existingTile.getY() == y) {
+                        duplicate = true;
+                }
+            }
+            } while (duplicate);
+            targetX = x;
+            targetY = y;
+            int chance = (int) (Math.random() * 10);
+            value = chance == 0 ? RARE_STARTING_VALUE : COMMON_STARTING_VALUE;
+        }
+    
+        private int getX() {
+            return x;
+        }
+    
+        private int getY() {
+            return y;
+        }
+    
+        private void setTargetX(int targetX) {
+            this.targetX = targetX;
+        }
+    
+        private void setTargetY(int targetY) {
+            this.targetY = targetY;
+        }
+    
+        private int getTargetX() {
+            return targetX;
+        }
+    
+        private int getTargetY() {
+            return targetY;
+        }
+    
+        private void move(int[] direction) {
+            final int SPEED = 10;
+            if (Math.abs(x - targetX) >= SPEED) {
+                x += direction[COL] * SPEED;
+            } else {
+                x += direction[COL];
+            }
+            if (Math.abs(y - targetY) >= SPEED) {
+                y += direction[ROW] * SPEED;
+            } else {
+                y += direction[ROW];
+            }
+        }
+    
+        private int getValue() {
+            return value;
+        }
+    
+        private void doubleValue() {
+            value *= 2;
+        }
+    
+        private boolean initialMerge() {
+            return initialMerge;
+        }
+    
+        private boolean finalMerge() {
+            return finalMerge;
+        }
+    
+        private void changeInitialMerge(boolean initialMerge) {
+            this.initialMerge = initialMerge;
+        }
+    
+        private void changeFinalMerge(boolean finalMerge) {
+            this.finalMerge = finalMerge;
+        }
+    
     }
 }
