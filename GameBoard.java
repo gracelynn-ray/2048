@@ -80,11 +80,11 @@ public class GameBoard extends JPanel implements ActionListener {
     private void swipe(int[] direction) {
         GameLauncher.inProgress = true;
         currentDirection = direction;
+        if (timer.isRunning()) {
+            timer.stop();
+        }
         boolean merged = mergeTiles(direction);
         boolean shifted = shiftTiles(direction);
-        if (timer.isRunning()) {
-                timer.stop();
-        }
         if (merged || shifted) {
             timer.start();
         } else {
