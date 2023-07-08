@@ -234,6 +234,9 @@ public class GameBoard extends JPanel implements ActionListener {
                 }
                 if (existingTile.finalMerge()) {
                     finalMerges = true;
+                    if (existingTile.getX() != existingTile.getTargetX() || existingTile.getY() != existingTile.getTargetY()) {
+                        existingTile.move(currentDirection);
+                    }
                     existingTile.doubleValue();
                     existingTile.changeFinalMerge(false);
                 }
