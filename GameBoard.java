@@ -5,12 +5,10 @@ import java.awt.FontMetrics;
 import java.awt.geom.Rectangle2D;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -50,16 +48,8 @@ public class GameBoard extends JPanel implements ActionListener {
     }
 
     private void setUpBoardBase() {
-        setBorder(BorderFactory.createLineBorder(new Color(188, 172, 158), 10));
-        setLayout(new GridLayout(NUM_ROWS_AND_COLS, NUM_ROWS_AND_COLS, 10, 10));
-        setBackground(new Color(188, 172, 158));
+        setBackground(new Color(251, 248, 239));
         setPreferredSize(new Dimension(500, 500));
-        JPanel[] panels = new JPanel[NUM_ROWS_AND_COLS * NUM_ROWS_AND_COLS];
-        for (int i = 0; i < NUM_ROWS_AND_COLS * NUM_ROWS_AND_COLS; i++) {
-            panels[i] = new JPanel();
-            panels[i].setBackground(new Color(204, 192, 178));
-            add(panels[i]);
-        }
         existingTiles = new ArrayList<>();
         existingTiles.add(new GameTile(existingTiles));
         existingTiles.add(new GameTile(existingTiles));
@@ -190,16 +180,25 @@ public class GameBoard extends JPanel implements ActionListener {
 
     public void paint(Graphics g) {
         super.paint(g);
+        final int ARC = 10;
+        g.setColor(new Color(188, 172, 158));
+        g.fillRoundRect(0, 0, 500, 500, ARC, ARC);
+        g.setColor(new Color(204, 192, 178));
+        for (int row = 0; row < NUM_ROWS_AND_COLS; row++) {
+            for (int col = 0; col < NUM_ROWS_AND_COLS; col++) {
+                g.fillRoundRect(convertRowAndCol(col), convertRowAndCol(row), TILE_SIZE, TILE_SIZE, ARC, ARC);
+            }
+        }
         for (GameTile existingTile : existingTiles) {
             int tileValue = existingTile.getValue();
             String tileValueDisplay = "" + tileValue;
 
             int xValue = existingTile.getX();
             int yValue = existingTile.getY();
-            int fontSize = tileValue < 128 ? 50 : tileValue < 1024 ? 45 : 30;
+            int fontSize = tileValue < 128 ? 50 : tileValue < 1024 ? 45 : 35;
             Color fontColor = tileValue < 8 ? new Color(118, 111, 100) : new Color(250, 247, 241);
             g.setColor((TILE_COLORS[(int) (Math.log10(tileValue) / Math.log10(2))]));
-            g.fillRect(xValue, yValue, TILE_SIZE, TILE_SIZE);
+            g.fillRoundRect(xValue, yValue, TILE_SIZE, TILE_SIZE, ARC, ARC);
 
             g.setFont(new Font(null, Font.BOLD, fontSize));
             g.setColor(fontColor);
