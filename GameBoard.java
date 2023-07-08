@@ -26,10 +26,6 @@ public class GameBoard extends JPanel implements ActionListener {
     public static final int ROW = 0;
     public static final int COL = 1;
 
-    private int[] currentDirection;
-    private boolean spawnTile;
-    private Timer timer;
-
     // array of colors; array position corresponds to power of 2 that tile value is
     public static final Color[] TILE_COLORS = { new Color(204, 192, 178), new Color(236, 224, 215),
         new Color(237, 223, 199), new Color(241, 177, 120), new Color(245, 149, 98),
@@ -37,14 +33,17 @@ public class GameBoard extends JPanel implements ActionListener {
         new Color(238, 205, 99), new Color(236, 199, 79), new Color(239, 197, 63),
         new Color(238, 194, 46), new Color(62, 57, 51) } ;
 
+    private int[] currentDirection;
+    private boolean spawnTile;
+    private Timer timer;
+    private boolean moveInProgress;
     private ArrayList<GameTile> existingTiles;
     private GameTile[][] boardRepresentation;
 
     public GameBoard() {
         currentDirection = new int[] {0, 0};
-        timer = new Timer(1, this);
         setUpBoardBase();
-        boardRepresentation = getBoardRepresentation(false);
+        timer = new Timer(1, this);
     }
 
     private void setUpBoardBase() {
@@ -53,14 +52,15 @@ public class GameBoard extends JPanel implements ActionListener {
         existingTiles = new ArrayList<>();
         existingTiles.add(new GameTile());
         existingTiles.add(new GameTile());
+        boardRepresentation = getBoardRepresentation(false);
     }
 
-    private GameTile[][] getBoardRepresentation(boolean merged) {
+    private GameTile[][] getBoardRepresentation(boolean postMerge) {
         GameTile[][] boardRepresentation = new GameTile[NUM_ROWS_AND_COLS][NUM_ROWS_AND_COLS];
         for (GameTile existingTile : existingTiles) {
             if (!existingTile.initialMerge()) {
-                int row = convertCoordinate(!merged ? existingTile.getY() : existingTile.getTargetY());
-                int col = convertCoordinate(!merged ? existingTile.getX() : existingTile.getTargetX());
+                int row = convertCoordinate(!postMerge ? existingTile.getY() : existingTile.getTargetY());
+                int col = convertCoordinate(!postMerge ? existingTile.getX() : existingTile.getTargetX());
                 boardRepresentation[row][col] = existingTile;
             }
         }
@@ -68,7 +68,7 @@ public class GameBoard extends JPanel implements ActionListener {
     }
 
     private void swipe(int[] direction) {
-        GameLauncher.inProgress = true;
+        moveInProgress = true;
         currentDirection = direction;
         if (timer.isRunning()) {
             timer.stop();
@@ -78,7 +78,7 @@ public class GameBoard extends JPanel implements ActionListener {
         if (merged || shifted) {
             timer.start();
         } else {
-            GameLauncher.inProgress = false;
+            moveInProgress = false;
         }
     }
 
@@ -213,6 +213,10 @@ public class GameBoard extends JPanel implements ActionListener {
         }
     }
 
+    public boolean moveInProgress() {
+        return moveInProgress;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         boolean moved = false;
@@ -243,7 +247,7 @@ public class GameBoard extends JPanel implements ActionListener {
             if (spawnTile && !finalMerges) {
                 existingTiles.add(new GameTile());
                 spawnTile = false;
-                GameLauncher.inProgress = false;
+                moveInProgress = false;
             }
             boardRepresentation = getBoardRepresentation(false);
             repaint();
@@ -267,13 +271,13 @@ public class GameBoard extends JPanel implements ActionListener {
             boolean duplicate = false;
             do {
                 duplicate = false;
-                x = (int) (Math.random() * NUM_ROWS_AND_COLS) * ROW_COL_SIZE + BORDER_SIZE;
-                y = (int) (Math.random() * NUM_ROWS_AND_COLS) * ROW_COL_SIZE + BORDER_SIZE;
+                x = convertRowAndCol((int) (Math.random() * NUM_ROWS_AND_COLS));
+                y = convertRowAndCol((int) (Math.random() * NUM_ROWS_AND_COLS));
                 for (GameTile existingTile : existingTiles) {
                     if (existingTile.getX() == x && existingTile.getY() == y) {
                         duplicate = true;
+                    }
                 }
-            }
             } while (duplicate);
             targetX = x;
             targetY = y;
@@ -307,14 +311,11 @@ public class GameBoard extends JPanel implements ActionListener {
     
         private void move(int[] direction) {
             final int SPEED = 10;
-            if (Math.abs(x - targetX) >= SPEED) {
+            if (Math.abs(x - targetX) >= SPEED || Math.abs(y - targetY) >= SPEED) {
                 x += direction[COL] * SPEED;
-            } else {
-                x += direction[COL];
-            }
-            if (Math.abs(y - targetY) >= SPEED) {
                 y += direction[ROW] * SPEED;
             } else {
+                x += direction[COL];
                 y += direction[ROW];
             }
         }

@@ -62,8 +62,6 @@ public class GameLauncher {
         gameWindow.add(panels[3], BorderLayout.SOUTH);
     }
 
-    public static boolean inProgress = false;
-
     // Adds key listener to game window. Pressed arrow keys swipe the game board in corresponding direction.
     private static void moveBoard(JFrame gameWindow, GameBoard gameBoard) {
         final int UP_ARROW = 38;
@@ -72,7 +70,7 @@ public class GameLauncher {
         final int RIGHT_ARROW = 39;
         gameWindow.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                if (!inProgress) {
+                if (!gameBoard.moveInProgress()) {
                     if (e.getKeyCode() == UP_ARROW) {
                         gameBoard.swipeUp();
                     } else if (e.getKeyCode() == DOWN_ARROW) {
