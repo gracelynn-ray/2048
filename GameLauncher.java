@@ -1,9 +1,13 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,16 +26,31 @@ public class GameLauncher {
     // Creates and sets up game window and game display.
     private static void launchGame() {
         JFrame gameWindow = new JFrame();
-        GameBoard gameBoard = new GameBoard();
-        setUpGame(gameWindow, gameBoard);
+        Font gameFont = createGameFont();
+        ScoreBoard scoreBoard = new ScoreBoard(gameFont);
+        GameBoard gameBoard = new GameBoard(scoreBoard, gameFont);
+        setUpGame(gameWindow, gameBoard, scoreBoard);
         moveBoard(gameWindow, gameBoard);
     }
 
+    // Creates game font from font file.
+    private static Font createGameFont() {
+        try {
+            return Font.createFont(Font.TRUETYPE_FONT, new File("ClearSans-Bold.ttf"));
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // Sets up window JFrame and panel game board.
-    private static void setUpGame(JFrame gameWindow, GameBoard gameBoard) {
+    private static void setUpGame(JFrame gameWindow, GameBoard gameBoard, ScoreBoard scoreBoard) {
         setUpFrame(gameWindow);
         setUpPanels(gameWindow);
         gameWindow.add(gameBoard);
+        gameWindow.add(scoreBoard, BorderLayout.NORTH);
         gameWindow.pack();
         gameWindow.setVisible(true);
     }
@@ -49,17 +68,17 @@ public class GameLauncher {
 
     // Sets up panels that surround the game board.
     private static void setUpPanels(JFrame gameWindow) {
-        final int NUM_PANELS = 4;
+        final int NUM_PANELS = 3;
         JPanel[] panels = new JPanel[NUM_PANELS];
         for (int i = 0; i < NUM_PANELS; i++) {
             panels[i] = new JPanel();
             panels[i].setBackground(new Color(251, 248, 239));
             panels[i].setPreferredSize(new Dimension(125, 125));
         }
-        gameWindow.add(panels[0], BorderLayout.NORTH);
-        gameWindow.add(panels[1], BorderLayout.EAST);
-        gameWindow.add(panels[2], BorderLayout.WEST);
-        gameWindow.add(panels[3], BorderLayout.SOUTH);
+        gameWindow.add(panels[0], BorderLayout.EAST);
+        gameWindow.add(panels[1], BorderLayout.WEST);
+        panels[2].setPreferredSize(new Dimension(125, 50));
+        gameWindow.add(panels[2], BorderLayout.SOUTH);
     }
 
     // Adds key listener to game window. Pressed arrow keys swipe the game board in corresponding direction.
