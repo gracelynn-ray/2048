@@ -32,6 +32,7 @@ public class GameLauncher {
         Font gameFont = createGameFont();
         ScoreBoard scoreBoard = new ScoreBoard(gameFont);
         GameBoard gameBoard = new GameBoard(scoreBoard, gameFont);
+        setUpFrame(gameWindow);
         setUpHomeScreen(gameWindow, gameBoard, scoreBoard, gameFont);        
     }
 
@@ -51,8 +52,6 @@ public class GameLauncher {
         gameWindow.getContentPane().removeAll();
         gameWindow.revalidate();
         gameWindow.repaint();
-
-        setUpFrame(gameWindow);
 
         JPanel homeScreen = new JPanel();
         homeScreen.setPreferredSize(new Dimension(SCREEN_SIZE, SCREEN_SIZE));
@@ -77,8 +76,6 @@ public class GameLauncher {
 
     private static void setUpStartButton(JButton start, Font gameFont, int x, int y) {
         start.setBounds(x, y, 250, 75);
-        start.setFont(gameFont.deriveFont(40f));
-        start.setBackground(new Color(188, 172, 158));
         start.setOpaque(false);
         start.setBorderPainted(false);
     }
