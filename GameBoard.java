@@ -202,6 +202,7 @@ public class GameBoard extends JPanel implements ActionListener {
         return shifted;
     }
 
+    // Returns whether player has lost. Player has lost if no tiles merge of shift in any direction.
     public boolean gameOver() {
         for (int[] direction : DIRECTIONS) {
             if (mergeTiles(direction, false) || shiftTiles(direction, false)) {
