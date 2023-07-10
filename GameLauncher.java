@@ -36,7 +36,7 @@ public class GameLauncher {
     // Creates game font from font file.
     private static Font createGameFont() {
         try {
-            return Font.createFont(Font.TRUETYPE_FONT, new File("ClearSans-Bold.ttf"));
+            return Font.createFont(Font.TRUETYPE_FONT, new File("GameFont.ttf"));
         } catch (FontFormatException e) {
             e.printStackTrace();
         } catch (IOException e) {
