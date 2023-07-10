@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 public class ScoreBoard extends JPanel {
 
     private int score;
+    private int bestScore;
     private Font gameFont;
 
     // Constructs ScoreBoard using given Font.
@@ -24,6 +25,13 @@ public class ScoreBoard extends JPanel {
     public void updateScore(int scoreUpdate) {
         score += scoreUpdate;
         repaint();
+    }
+
+    public void gameOver() {
+        if (score > bestScore) {
+            bestScore = score;
+        }
+        score = 0;
     }
 
     // Draws the score board design and updates new score upon repaint.
@@ -73,6 +81,7 @@ public class ScoreBoard extends JPanel {
         drawCenteredText(g, "BEST", TILE_X_VALUE_BEST_SCORE, TILE_SIZE, FONT_Y_VALUE_SCORE_TITLE);
         g.setColor(FONT_COLOR_WHITE);
         drawCenteredText(g, score + "", TILE_X_VALUE_CURRENT_SCORE, TILE_SIZE, FONT_Y_VALUE_SCORE);
+        drawCenteredText(g, bestScore + "", TILE_X_VALUE_BEST_SCORE, TILE_SIZE, FONT_Y_VALUE_SCORE);
     }
 
     // Draws text centered in a rectangle with the given positioning.
