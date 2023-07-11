@@ -35,7 +35,7 @@ public class ScoreBoard extends JPanel {
         while (previousScoresInput.hasNextInt()) {
             previousScores.add(previousScoresInput.nextInt());
         }
-        bestScore = previousScores.get(0);
+        bestScore = previousScores.size() == 0 ? 0 : previousScores.get(0);
         for (Integer previousScore : previousScores) {
             if (previousScore > bestScore) {
                 bestScore = previousScore;
