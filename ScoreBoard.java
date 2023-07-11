@@ -5,6 +5,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.JPanel;
 
@@ -14,11 +19,28 @@ public class ScoreBoard extends JPanel {
     private int score;
     private int bestScore;
     private Font gameFont;
+    private ArrayList<Integer> previousScores;
 
     // Constructs ScoreBoard using given Font.
     public ScoreBoard(Font gameFont) {
         this.gameFont = gameFont;
         setPreferredSize(new Dimension(125, 200));
+        Scanner previousScoresInput = null;
+        try {
+            previousScoresInput = new Scanner(new File("Scores.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        previousScores = new ArrayList<>();
+        while (previousScoresInput.hasNextInt()) {
+            previousScores.add(previousScoresInput.nextInt());
+        }
+        bestScore = previousScores.get(0);
+        for (Integer previousScore : previousScores) {
+            if (previousScore > bestScore) {
+                bestScore = previousScore;
+            }
+        }
     }
 
     // Increases score by given amount and repaints board.
@@ -32,6 +54,16 @@ public class ScoreBoard extends JPanel {
         if (score > bestScore) {
             bestScore = score;
         }
+        PrintStream previousScoresOutput = null;
+        try {
+            previousScoresOutput = new PrintStream(new File("Scores.txt"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        for (Integer previousScore : previousScores) {
+            previousScoresOutput.println(previousScore);
+        }
+        previousScoresOutput.println(score);
         score = 0;
     }
 
