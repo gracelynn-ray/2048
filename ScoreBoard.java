@@ -51,6 +51,7 @@ public class ScoreBoard extends JPanel {
 
     // Resets score for next round and changes best score if this score beat it.
     public void gameOver() {
+        previousScores.add(score);
         if (score > bestScore) {
             bestScore = score;
         }
@@ -63,7 +64,6 @@ public class ScoreBoard extends JPanel {
         for (Integer previousScore : previousScores) {
             previousScoresOutput.println(previousScore);
         }
-        previousScoresOutput.println(score);
         score = 0;
     }
 
